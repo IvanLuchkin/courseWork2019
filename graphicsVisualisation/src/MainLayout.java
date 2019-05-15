@@ -4,35 +4,41 @@ import java.awt.event.*;
 
 public class MainLayout extends JFrame {
 
-    String function = "";
-    double x1;
-    double x2;
-    double y1;
-    double y2;
-    TextField functionInput;
-    TextField accuracyInput;
-    TextField inputX1;
-    TextField inputX2;
-    TextField inputY1;
-    TextField inoutY2;
-    JFrame FRAME;
-    JPanel PANEL;
-    JLabel errorLabel;
-    JButton startButton;
-    JRadioButton chooseGoldenSection;
-    JRadioButton chooseSearch;
-    JRadioButton chooseDihotomy;
+    private String function = "";
+    private double accuracy;
+    private double x1;
+    private double x2;
+    private double y1;
+    private double y2;
+    private TextField functionInput;
+    private TextField accuracyInput;
+    private TextField inputX1;
+    private TextField inputX2;
+    private TextField inputY1;
+    private TextField inoutY2;
+    private JFrame FRAME;
+    private JPanel PANEL;
+    private JLabel errorLabel;
+    private JLabel resultMinLabel;
+    private JLabel resultMaxLabel;
+    private JLabel resultMinTechLabel;
+    private JLabel resultMaxTechLabel;
+    private JLabel resultTechLabel;
+    private JButton startButton;
+    private JRadioButton chooseGoldenSection;
+    private JRadioButton chooseEvenSearch;
+    private JRadioButton chooseDihotomy;
 
     MainLayout() {
         FRAME = new JFrame();
-        FRAME.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        FRAME.setDefaultCloseOperation(EXIT_ON_CLOSE);
         PANEL = new JPanel();
         FRAME.add(PANEL);
         PANEL.setBackground(Color.white);
         PANEL.setLayout(null);
         startButton = new JButton("Начать поиск");
         chooseGoldenSection = new JRadioButton("Метод золотого сечения");
-        chooseSearch = new JRadioButton("Метод равномерного поиска");
+        chooseEvenSearch = new JRadioButton("Метод равномерного поиска");
         chooseDihotomy = new JRadioButton("Метод дихотомии");
         FRAME.setSize(300, 800);
         FRAME.setTitle("Поиск экстремумов");
@@ -80,11 +86,41 @@ public class MainLayout extends JFrame {
         JLabel labelX2 = new JLabel("до:");
         JLabel labelY1 = new JLabel("Y от:");
         JLabel labelY2 = new JLabel("до:");
-        JLabel resultLabel = new JLabel("");
+        ButtonGroup group = new ButtonGroup();
+        group.add(chooseDihotomy);
+        group.add(chooseGoldenSection);
+        group.add(chooseEvenSearch);
+        resultTechLabel = new JLabel("Ваш результат:");
+        resultMinLabel = new JLabel();
+        resultMaxLabel = new JLabel();
+        resultMinTechLabel = new JLabel("Точка минимума:");
+        resultMaxTechLabel = new JLabel("Точка максимума:");
 
-        resultLabel.setLocation(400, 380);
-        resultLabel.setSize(100, 30);
-        PANEL.add(resultLabel);
+
+        resultMinTechLabel.setLocation(10, 490);
+        resultMinTechLabel.setSize(150, 30);
+        resultMinTechLabel.setVisible(true);
+        PANEL.add(resultMinTechLabel);
+
+        resultMaxTechLabel.setLocation(10, 525);
+        resultMaxTechLabel.setSize(150, 30);
+        resultMaxTechLabel.setVisible(true);
+        PANEL.add(resultMaxTechLabel);
+
+        resultTechLabel.setLocation(10, 455);
+        resultTechLabel.setSize(140, 20);
+        resultTechLabel.setVisible(true);
+        PANEL.add(resultTechLabel);
+
+        resultMinLabel.setLocation(200, 490);
+        resultMinLabel.setSize(100, 30);
+        resultMinLabel.setVisible(true);
+        PANEL.add(resultMinLabel);
+
+        resultMaxLabel.setLocation(200, 525);
+        resultMaxLabel.setSize(100, 30);
+        resultMaxLabel.setVisible(true);
+        PANEL.add(resultMaxLabel);
 
         finputTechLabel1.setLocation(10, 20);
         finputTechLabel1.setSize(140, 20);
@@ -135,10 +171,10 @@ public class MainLayout extends JFrame {
         chooseGoldenSection.setBackground(Color.white);
         PANEL.add(chooseGoldenSection);
 
-        chooseSearch.setLocation(5, 335);
-        chooseSearch.setSize(230, 25);
-        chooseSearch.setBackground(Color.white);
-        PANEL.add(chooseSearch);
+        chooseEvenSearch.setLocation(5, 335);
+        chooseEvenSearch.setSize(230, 25);
+        chooseEvenSearch.setBackground(Color.white);
+        PANEL.add(chooseEvenSearch);
 
         chooseDihotomy.setLocation(5, 365);
         chooseDihotomy.setSize(200, 25);
@@ -148,51 +184,87 @@ public class MainLayout extends JFrame {
         errorLabel = new JLabel("");
         errorLabel.setLocation(10, 210);
         errorLabel.setSize(170, 20);
-        PANEL.add(errorLabel);
+        //PANEL.add(errorLabel);
 
         FRAME.setVisible(true);
         FRAME.setResizable(false);
 
+        chooseGoldenSection.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                chooseDihotomy.setRolloverEnabled(false);
+                chooseDihotomy.setDisabledIcon(new ImageIcon());
+                chooseEvenSearch.setRolloverEnabled(false);
+            }
+        });
 
         startButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-
-                function = functionInput.getText();
+                AutoSaver saver = new AutoSaver();
+                saver.inputFunctionSaver = function = functionInput.getText();
+                saver.inputAccuracySaver = accuracy = Double.parseDouble(accuracyInput.getText());
                 if (!function.equals("")) {
                     set("");
-                    x1 = Double.parseDouble(inputX1.getText());
-                    x2 = Double.parseDouble(inputX2.getText());
+                    saver.inputX1Saver = x1 = Double.parseDouble(inputX1.getText());
+                    saver.inputX2Saver = x2 = Double.parseDouble(inputX2.getText());
                     try {
                         if (x1 < x2) {
                             set("");
-                            y1 = Double.parseDouble(inputY1.getText());
-                            y2 = Double.parseDouble(inoutY2.getText());
+                            saver.inputY1Saver = y1 = Double.parseDouble(inputY1.getText());
+                            saver.inputY2Saver = y2 = Double.parseDouble(inoutY2.getText());
                             try {
                                 if (y1 < y2) {
                                     set("");
                                     set("УРА!");
+                                    FunctionInterpreter f = new FunctionInterpreter(function);
                                     try {
+                                        double resultMinX = 0;
+                                        double resultMinY = 0;
+                                        double resultMaxX = 0;
+                                        double resultMaxY = 0;
                                         if (chooseGoldenSection.isEnabled()) {
-                                            resultLabel.setText(Double.toString(new GoldenSection(new CoordinatesCalculator(function)).findMax(x1, x2, 0.000001)));
+                                            resultMinX = (double) Math.round(new GoldenSectionSearch(f).findMin(x1, x2, accuracy) * 100) / 100;
+                                            resultMinY = f.alg(resultMinX);
+                                            resultMinLabel.setText("(" + resultMinX + ")" + " " + "(" + resultMinY + ")");
+                                            resultMaxX = (double) Math.round(new GoldenSectionSearch(f).findMax(x1, x2, accuracy) * 100) / 100;
+                                            resultMaxY = f.alg(resultMaxX);
+                                            resultMaxLabel.setText("(" + resultMaxX + ")" + " " + "(" + resultMaxY + ")");
                                         }
-                                        GraphicsPainter p = new GraphicsPainter(x1, x2, y1, y2, function);
+                                        if (chooseDihotomy.isEnabled()) {
+                                            resultMinX = (double) Math.round(new DihotomySearch(f).findMin(x1, x2, accuracy) * 100) / 100;
+                                            resultMinY = f.alg(resultMinX);
+                                            resultMinLabel.setText("(" + resultMinX + ")" + " " + "(" + resultMinY + ")");
+                                            resultMaxX = (double) Math.round(new DihotomySearch(f).findMax(x1, x2, accuracy) * 100) / 100;
+                                            resultMaxY = f.alg(resultMaxX);
+                                            resultMaxLabel.setText("(" + resultMaxX + ")" + " " + "(" + resultMaxY + ")");
+                                        }
+                                        if (chooseEvenSearch.isEnabled()) {
+                                            resultMinX = (double) Math.round(new GoldenSectionSearch(f).findMin(x1, x2, accuracy) * 100) / 100;
+                                            resultMinY = f.alg(resultMinX);
+                                            resultMinLabel.setText("(" + resultMinX + ")" + " " + "(" + resultMinY + ")");
+                                            resultMaxX = (double) Math.round(new GoldenSectionSearch(f).findMax(x1, x2, accuracy) * 100) / 100;
+                                            resultMaxY = f.alg(resultMaxX);
+                                            resultMaxLabel.setText("(" + resultMaxX + ")" + " " + "(" + resultMaxY + ")");
+
+                                        }
+                                        GraphicsPainter p = new GraphicsPainter(x1, x2, y1, y2, function, resultMinX, resultMinY, resultMaxX, resultMaxY);
                                     } catch (Exception w3) {
-                                        set("класс GraphicsPainter - говно!");
+                                        set("UNABLE TO PAINT GRAPHIC");
                                         System.out.println(w3);
                                     }
                                 } else {
-                                    set("некорректный интервал Y");
+                                    set("INCORRECT INTERVAL: Y");
                                 }
                             } catch (Exception w1) {
-                                set("некорректные координаты");
+                                set("INCORRECT COORDINATES");
                             }
                         } else {
-                            set("некорректный интервал X");
+                            set("INCORRECT INTERVAL: X");
                         }
 
                     } catch (Exception w2) {
-                        set("некорректные координаты");
+                        set("INCORRECT COORDINATES");
                     }
                 } else {
                     set("Введите функцию");
@@ -202,11 +274,11 @@ public class MainLayout extends JFrame {
         });
     }
 
-    public void set(String s) {
+    private void set(String s) {
         errorLabel.setText(s);
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         new MainLayout();
     }
 }

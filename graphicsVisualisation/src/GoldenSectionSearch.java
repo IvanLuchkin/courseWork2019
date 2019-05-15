@@ -1,6 +1,6 @@
-class GoldenSection {
-    private CoordinatesCalculator f;
-    public GoldenSection(CoordinatesCalculator func) {
+class GoldenSectionSearch {
+    private FunctionInterpreter f;
+    public GoldenSectionSearch(FunctionInterpreter func) {
         f = func;
     }
 

@@ -8,8 +8,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class GraphicsPainter extends JPanel {
 
@@ -19,10 +18,15 @@ public class GraphicsPainter extends JPanel {
     int HEIGHT;
     int lastX;
     int lastY;
+    double pointMinX, pointMinY, pointMaxX, pointMaxY;
 
-    CoordinatesCalculator f;
+    FunctionInterpreter f;
 
-    GraphicsPainter(double x1, double x2, double y1, double y2, String s) {
+    GraphicsPainter(double x1, double x2, double y1, double y2, String s, double pointMinX, double pointMinY, double pointMaxX, double pointMaxY) {
+        this.pointMaxX = pointMaxX;
+        this.pointMinX = pointMinX;
+        this.pointMinY = pointMinY;
+        this.pointMaxY = pointMaxY;
 
         this.x1 = x1;
         this.x2 = x2;
@@ -31,14 +35,16 @@ public class GraphicsPainter extends JPanel {
 
         HEIGHT = 480;
         WIDTH = 640;
+        if (s.contains("sin") || s.contains("cos") || s.contains("tg") || s.contains("ctg")) {
+            step_x = Math.PI;
+        } else step_x = 1;
 
-        step_x = Math.PI;
         step_y = 1;
 
         lastX = 0;
         lastY = 0;
 
-        f = new CoordinatesCalculator(s);
+        f = new FunctionInterpreter(s);
 
         frameOp();
 
@@ -46,10 +52,11 @@ public class GraphicsPainter extends JPanel {
 
     public void frameOp() {
 
-        JFrame JF = new JFrame("test_title");
-        JF.setBounds(100, 100, WIDTH + 6, HEIGHT + 28);
+        JFrame JF = new JFrame("Graphic");
+        JF.setLocation(600, 200);
+        JF.setBounds(600, 100, WIDTH + 6, HEIGHT + 28);
         JF.setLayout(null);
-        JF.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JF.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         JF.setVisible(true);
         JF.setResizable(false);
         this.setSize(WIDTH, HEIGHT);
@@ -148,6 +155,8 @@ public class GraphicsPainter extends JPanel {
         g.setColor(Color.RED);
 
         paintF(g);
+        g.drawRoundRect((int)pointMaxX, (int)pointMaxY, 10, 10, 10, 10);
+        g.drawRoundRect((int)pointMinX, (int)pointMinY, 10, 10, 10, 10);
 
     }
 
@@ -180,7 +189,7 @@ public class GraphicsPainter extends JPanel {
                 format = 10;
             }
 
-            g.drawString(String.format("%." + String.valueOf(format) + "function", i * step_x), positionX + 2, positionY);
+            g.drawString(String.format("%." + String.valueOf(format) + "f", i * step_x), positionX + 2, positionY);
         }
 
         for (int i = (int) Math.floor(y1 / step_y); i <= Math.floor(y2 / step_y); i++) {
@@ -198,7 +207,7 @@ public class GraphicsPainter extends JPanel {
                 format = 10;
             }
 
-            String formated_value = String.format("%." + String.valueOf(format) + "function", i * step_y);
+            String formated_value = String.format("%." + String.valueOf(format) + "f" , i * step_y);
 
             int len = (int) new TextLayout(formated_value, g.getFont(), new FontRenderContext(null, true, true)).getBounds().getWidth();
 
@@ -214,21 +223,20 @@ public class GraphicsPainter extends JPanel {
         }
 
         g.setColor(Color.BLACK);
-        //g.drawLine((int) (-x1 / (x2 - x1) * WIDTH), 0, (int) (-x1 / (x2 - x1) * WIDTH), HEIGHT);
-        //g.drawLine(0, (int) (HEIGHT + y1 / (y2 - y1) * HEIGHT), WIDTH, (int) (HEIGHT + y1 / (y2 - y1) * HEIGHT));
+        g.drawLine((int) (-x1 / (x2 - x1) * WIDTH), 0, (int) (-x1 / (x2 - x1) * WIDTH), HEIGHT);
+        g.drawLine(0, (int) (HEIGHT + y1 / (y2 - y1) * HEIGHT), WIDTH, (int) (HEIGHT + y1 / (y2 - y1) * HEIGHT));
         g.fillRect(OX - 1, 0, 3, HEIGHT);
         g.fillRect(0, OY - 1, WIDTH, 3);
+
 
     }
 
     public void paintF(Graphics g) {
 
         int q1 = HEIGHT - (int) Math.floor((HEIGHT / (Math.abs(y2 - y1))) * (f.alg(x1) - y1));
-        System.out.println(f.alg(2));
         for (int i = 1; i < WIDTH; i++) {
             double i2 = f.alg(x1 + ((Math.abs(x2 - x1)) / WIDTH) * i);
             int q2 = HEIGHT - (int) Math.floor((HEIGHT / (Math.abs(y2 - y1))) * (i2 - y1));
-
             g.drawLine(i - 1, q1, i, q2);
 
             q1 = q2;

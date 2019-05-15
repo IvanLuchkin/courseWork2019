@@ -1,10 +1,10 @@
 import java.util.*;
 
-public class CoordinatesCalculator {
+class FunctionInterpreter {
 
     ArrayList<String> post;
 
-    CoordinatesCalculator(String Func) {
+    FunctionInterpreter(String Func) {
         ArrayList<String> list = new ArrayList<String>();
         list.add("(");
 
@@ -142,7 +142,7 @@ public class CoordinatesCalculator {
         System.out.println(steck.toString());
     }
 
-    public Double alg(double x) {
+    Double alg(double x) {
         ArrayList<Double> stack = new ArrayList<Double>();
 
         for (int i = 0; i < post.size(); i++) {
