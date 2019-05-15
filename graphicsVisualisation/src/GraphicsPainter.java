@@ -22,7 +22,7 @@ public class GraphicsPainter extends JPanel {
 
     FunctionInterpreter f;
 
-    GraphicsPainter(double x1, double x2, double y1, double y2, String s, double pointMinX, double pointMinY, double pointMaxX, double pointMaxY) {
+    GraphicsPainter(double x1, double x2, double y1, double y2, String s/*, double pointMinX, double pointMinY, double pointMaxX, double pointMaxY*/) {
         this.pointMaxX = pointMaxX;
         this.pointMinX = pointMinX;
         this.pointMinY = pointMinY;

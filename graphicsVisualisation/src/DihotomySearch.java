@@ -18,7 +18,6 @@ public class DihotomySearch {
             }
 
         } while (Math.abs(a - b) > e);
-        System.out.println(x);
         return x;
     }
 
@@ -36,7 +35,6 @@ public class DihotomySearch {
             }
 
         } while (Math.abs(a - b) > e);
-        System.out.println(x);
         return x;
     }
 }

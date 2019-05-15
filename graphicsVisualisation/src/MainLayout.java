@@ -30,6 +30,7 @@ public class MainLayout extends JFrame {
     private JRadioButton chooseDihotomy;
 
     MainLayout() {
+        ButtonGroup group = new ButtonGroup();
         FRAME = new JFrame();
         FRAME.setDefaultCloseOperation(EXIT_ON_CLOSE);
         PANEL = new JPanel();
@@ -86,10 +87,7 @@ public class MainLayout extends JFrame {
         JLabel labelX2 = new JLabel("до:");
         JLabel labelY1 = new JLabel("Y от:");
         JLabel labelY2 = new JLabel("до:");
-        ButtonGroup group = new ButtonGroup();
-        group.add(chooseDihotomy);
-        group.add(chooseGoldenSection);
-        group.add(chooseEvenSearch);
+
         resultTechLabel = new JLabel("Ваш результат:");
         resultMinLabel = new JLabel();
         resultMaxLabel = new JLabel();
@@ -189,14 +187,9 @@ public class MainLayout extends JFrame {
         FRAME.setVisible(true);
         FRAME.setResizable(false);
 
-        chooseGoldenSection.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                chooseDihotomy.setRolloverEnabled(false);
-                chooseDihotomy.setDisabledIcon(new ImageIcon());
-                chooseEvenSearch.setRolloverEnabled(false);
-            }
-        });
+        group.add(chooseDihotomy);
+        group.add(chooseGoldenSection);
+        group.add(chooseEvenSearch);
 
         startButton.addActionListener(new ActionListener() {
 
@@ -223,35 +216,42 @@ public class MainLayout extends JFrame {
                                         double resultMinY = 0;
                                         double resultMaxX = 0;
                                         double resultMaxY = 0;
-                                        if (chooseGoldenSection.isEnabled()) {
+                                        GraphicsPainter p = new GraphicsPainter(x1, x2, y1, y2, function/*, resultMinX, resultMinY, resultMaxX, resultMaxY*/);
+
+                                        if (chooseGoldenSection.isSelected()) {
                                             resultMinX = (double) Math.round(new GoldenSectionSearch(f).findMin(x1, x2, accuracy) * 100) / 100;
                                             resultMinY = f.alg(resultMinX);
-                                            resultMinLabel.setText("(" + resultMinX + ")" + " " + "(" + resultMinY + ")");
+                                            resultMinLabel.setText("(" + resultMinX + ", " + resultMinY + ")");
                                             resultMaxX = (double) Math.round(new GoldenSectionSearch(f).findMax(x1, x2, accuracy) * 100) / 100;
                                             resultMaxY = f.alg(resultMaxX);
-                                            resultMaxLabel.setText("(" + resultMaxX + ")" + " " + "(" + resultMaxY + ")");
-                                        }
-                                        if (chooseDihotomy.isEnabled()) {
-                                            resultMinX = (double) Math.round(new DihotomySearch(f).findMin(x1, x2, accuracy) * 100) / 100;
-                                            resultMinY = f.alg(resultMinX);
-                                            resultMinLabel.setText("(" + resultMinX + ")" + " " + "(" + resultMinY + ")");
-                                            resultMaxX = (double) Math.round(new DihotomySearch(f).findMax(x1, x2, accuracy) * 100) / 100;
-                                            resultMaxY = f.alg(resultMaxX);
-                                            resultMaxLabel.setText("(" + resultMaxX + ")" + " " + "(" + resultMaxY + ")");
-                                        }
-                                        if (chooseEvenSearch.isEnabled()) {
-                                            resultMinX = (double) Math.round(new GoldenSectionSearch(f).findMin(x1, x2, accuracy) * 100) / 100;
-                                            resultMinY = f.alg(resultMinX);
-                                            resultMinLabel.setText("(" + resultMinX + ")" + " " + "(" + resultMinY + ")");
-                                            resultMaxX = (double) Math.round(new GoldenSectionSearch(f).findMax(x1, x2, accuracy) * 100) / 100;
-                                            resultMaxY = f.alg(resultMaxX);
-                                            resultMaxLabel.setText("(" + resultMaxX + ")" + " " + "(" + resultMaxY + ")");
+                                            resultMaxLabel.setText("(" + resultMaxX + ", " + resultMaxY + ")");
 
                                         }
-                                        GraphicsPainter p = new GraphicsPainter(x1, x2, y1, y2, function, resultMinX, resultMinY, resultMaxX, resultMaxY);
+                                        if (chooseDihotomy.isSelected()) {
+                                            resultMinX = (double) Math.round(new DihotomySearch(f).findMin(x1, x2, accuracy) * 100) / 100;
+                                            resultMinY = f.alg(resultMinX);
+                                            resultMinLabel.setText("(" + resultMinX + ", " + resultMinY + ")");
+                                            resultMaxX = (double) Math.round(new DihotomySearch(f).findMax(x1, x2, accuracy) * 100) / 100;
+                                            resultMaxY = f.alg(resultMaxX);
+                                            resultMaxLabel.setText("(" + resultMaxX + ", " + resultMaxY + ")");
+
+                                        }
+                                        if (chooseEvenSearch.isSelected()) {
+                                            resultMinX = (double) Math.round(new EvenSearch(f).findMin(x1, x2, accuracy) * 100) / 100;
+                                            resultMinY = f.alg(resultMinX);
+                                            resultMinLabel.setText("(" + resultMinX + ", " + resultMinY + ")");
+                                            resultMaxX = (double) Math.round(new EvenSearch(f).findMax(x1, x2, accuracy) * 100) / 100;
+                                            resultMaxY = f.alg(resultMaxX);
+                                            resultMaxLabel.setText("(" + resultMaxX + ", " + resultMaxY + ")");
+
+
+                                        }
+
+
+
+
                                     } catch (Exception w3) {
                                         set("UNABLE TO PAINT GRAPHIC");
-                                        System.out.println(w3);
                                     }
                                 } else {
                                     set("INCORRECT INTERVAL: Y");

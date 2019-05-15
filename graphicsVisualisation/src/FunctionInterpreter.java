@@ -82,8 +82,8 @@ class FunctionInterpreter {
         }
 
         post = new ArrayList<String>();
-        ArrayList<String> steck = new ArrayList<String>();
-        steck.add("");
+        ArrayList<String> stack = new ArrayList<String>();
+        stack.add("");
         list.add(")");
         list.add("?");
 
@@ -92,33 +92,33 @@ class FunctionInterpreter {
         while (!list.get(i).equals("?")) {
 
             if (list.get(i).equals("(")) {
-                steck.add("(");
+                stack.add("(");
                 i++;
             } else if (list.get(i).equals("*") | list.get(i).equals("/")) {
-                if (steck.get(steck.size() - 1).equals("*") | steck.get(steck.size() - 1).equals("/")) {
-                    post.add(steck.get(steck.size() - 1));
-                    steck.remove(steck.size() - 1);
+                if (stack.get(stack.size() - 1).equals("*") | stack.get(stack.size() - 1).equals("/")) {
+                    post.add(stack.get(stack.size() - 1));
+                    stack.remove(stack.size() - 1);
                 } else {
-                    steck.add(list.get(i));
+                    stack.add(list.get(i));
                     i++;
                 }
             } else if (list.get(i).equals("+") | list.get(i).equals("-")) {
-                if (steck.get(steck.size() - 1).equals("(")) {
-                    steck.add(list.get(i));
+                if (stack.get(stack.size() - 1).equals("(")) {
+                    stack.add(list.get(i));
                     i++;
                 } else {
-                    post.add(steck.get(steck.size() - 1));
-                    steck.remove(steck.size() - 1);
+                    post.add(stack.get(stack.size() - 1));
+                    stack.remove(stack.size() - 1);
                 }
             } else if (list.get(i).equals(")")) {
-                while (!steck.get(steck.size() - 1).equals("(")) {
-                    post.add(steck.get(steck.size() - 1));
-                    steck.remove(steck.size() - 1);
+                while (!stack.get(stack.size() - 1).equals("(")) {
+                    post.add(stack.get(stack.size() - 1));
+                    stack.remove(stack.size() - 1);
                 }
                 i++;
-                steck.remove(steck.size() - 1);
+                stack.remove(stack.size() - 1);
             } else if (list.get(i).equals("^") | list.get(i).equals("sin") | list.get(i).equals("cos") | list.get(i).equals("tg") | list.get(i).equals("ctg") | list.get(i).equals("lg") | list.get(i).equals("ln")) {
-                steck.add(list.get(i));
+                stack.add(list.get(i));
                 i++;
             } else {
                 post.add(list.get(i));
@@ -137,9 +137,7 @@ class FunctionInterpreter {
                 }
             }
         }
-        System.out.println(list.toString());
-        System.out.println(post.toString());
-        System.out.println(steck.toString());
+
     }
 
     Double alg(double x) {
