@@ -1,4 +1,4 @@
-public class DihotomySearch {
+class DihotomySearch {
     private FunctionInterpreter f;
     DihotomySearch(FunctionInterpreter func) {
         f = func;
@@ -30,7 +30,7 @@ public class DihotomySearch {
             double r = x + sigma;
             if (f.alg(l) >= f.alg(r)) {
                 b = r;
-            } else if (f.alg(l) > f.alg(r)) {
+            } else if (f.alg(l) < f.alg(r)) {
                 a = l;
             }
 

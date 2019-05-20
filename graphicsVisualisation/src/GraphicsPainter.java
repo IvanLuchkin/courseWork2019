@@ -2,10 +2,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import javax.swing.*;
@@ -13,16 +10,16 @@ import javax.swing.*;
 public class GraphicsPainter extends JPanel {
 
     double[] X;
-    double x1, x2, y1, y2, step_x, step_y;
-    int WIDTH;
-    int HEIGHT;
-    int lastX;
-    int lastY;
-    double pointMinX, pointMinY, pointMaxX, pointMaxY;
+    private double x1, x2, y1, y2, step_x, step_y;
+    private int WIDTH;
+    private int HEIGHT;
+    private int lastX;
+    private int lastY;
+    private double pointMinX, pointMinY, pointMaxX, pointMaxY;
 
-    FunctionInterpreter f;
+    private FunctionInterpreter f;
 
-    GraphicsPainter(double x1, double x2, double y1, double y2, String s/*, double pointMinX, double pointMinY, double pointMaxX, double pointMaxY*/) {
+    GraphicsPainter(double x1, double x2, double y1, double y2, String s, double pointMinX, double pointMinY, double pointMaxX, double pointMaxY) {
         this.pointMaxX = pointMaxX;
         this.pointMinX = pointMinX;
         this.pointMinY = pointMinY;
@@ -50,7 +47,7 @@ public class GraphicsPainter extends JPanel {
 
     }
 
-    public void frameOp() {
+    private void frameOp() {
 
         JFrame JF = new JFrame("Graphic");
         JF.setLocation(600, 200);
@@ -78,7 +75,7 @@ public class GraphicsPainter extends JPanel {
 
             @Override
             public void mouseDragged(MouseEvent evt) {
-                if (evt.getModifiers() == evt.BUTTON1_MASK) {
+                if (evt.getModifiersEx() == InputEvent.BUTTON1_DOWN_MASK) {
                     int newX = evt.getX();
                     int newY = evt.getY();
 
@@ -95,7 +92,7 @@ public class GraphicsPainter extends JPanel {
                     lastY = newY;
 
                     repaint();
-                } else if (evt.getModifiers() == evt.BUTTON3_MASK) {
+                } else if (evt.getModifiersEx() == InputEvent.BUTTON3_DOWN_MASK) {
 
                     int newX = evt.getX();
                     int newY = evt.getY();
@@ -120,23 +117,20 @@ public class GraphicsPainter extends JPanel {
         addMouseListener(MA);
         addMouseMotionListener(MA);
 
-        this.addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
+        this.addMouseWheelListener(e -> {
 
-                int r = e.getWheelRotation();
+            int r = e.getWheelRotation();
 
-                double dx = (x2 - x1) / (10 + Math.abs(r + 1) / 2);
-                double dy = (y2 - y1) / (10 + Math.abs(r + 1) / 2);
+            double dx = (x2 - x1) / (10 + Math.abs(r + 1) / 2);
+            double dy = (y2 - y1) / (10 + Math.abs(r + 1) / 2);
 
-                x1 -= r * dx * lastX / WIDTH;
-                x2 += r * dx * (WIDTH - lastX) / WIDTH;
-                y1 -= r * dy * (HEIGHT - lastY) / HEIGHT;
-                y2 += r * dy * lastY / HEIGHT;
+            x1 -= r * dx * lastX / WIDTH;
+            x2 += r * dx * (WIDTH - lastX) / WIDTH;
+            y1 -= r * dy * (HEIGHT - lastY) / HEIGHT;
+            y2 += r * dy * lastY / HEIGHT;
 
-                repaint();
+            repaint();
 
-            }
         });
 
 
@@ -155,12 +149,9 @@ public class GraphicsPainter extends JPanel {
         g.setColor(Color.RED);
 
         paintF(g);
-        g.drawRoundRect((int)pointMaxX, (int)pointMaxY, 10, 10, 10, 10);
-        g.drawRoundRect((int)pointMinX, (int)pointMinY, 10, 10, 10, 10);
-
     }
 
-    public void paintD(Graphics g) {
+    private void paintD(Graphics g) {
         g.setColor(Color.GRAY);
 
         int OX = (int) (-x1 / (x2 - x1) * WIDTH);
@@ -189,7 +180,7 @@ public class GraphicsPainter extends JPanel {
                 format = 10;
             }
 
-            g.drawString(String.format("%." + String.valueOf(format) + "f", i * step_x), positionX + 2, positionY);
+            g.drawString(String.format("%." + format + "f", i * step_x), positionX + 2, positionY);
         }
 
         for (int i = (int) Math.floor(y1 / step_y); i <= Math.floor(y2 / step_y); i++) {
@@ -207,7 +198,7 @@ public class GraphicsPainter extends JPanel {
                 format = 10;
             }
 
-            String formated_value = String.format("%." + String.valueOf(format) + "f" , i * step_y);
+            String formated_value = String.format("%." + format + "f" , i * step_y);
 
             int len = (int) new TextLayout(formated_value, g.getFont(), new FontRenderContext(null, true, true)).getBounds().getWidth();
 
@@ -231,7 +222,7 @@ public class GraphicsPainter extends JPanel {
 
     }
 
-    public void paintF(Graphics g) {
+    private void paintF(Graphics g) {
 
         int q1 = HEIGHT - (int) Math.floor((HEIGHT / (Math.abs(y2 - y1))) * (f.alg(x1) - y1));
         for (int i = 1; i < WIDTH; i++) {
